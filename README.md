@@ -9,7 +9,7 @@
 크롬 브라우저에서 아래 3개의 flag를 활성화 하세요.
 
 1. App Banners: chrome://flags#enable-app-banners
-2. Experimental App Banners:chrome://flags#enable-experimental-app-banners
+2. Experimental App Banners: chrome://flags#enable-experimental-app-banners
 3. Desktop PWAs: chrome://flags#enable-desktop-pwas
 
 이후 브라우저 메뉴(브라우저의 오른쪽 모서리에있는 세 개의 점)에서 Install + Website 이름을 볼 수 있습니다.
