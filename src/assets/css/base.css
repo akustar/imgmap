@@ -1,0 +1,165 @@
+@font-face {
+  font-family: Whitney;
+  font-weight: 400;
+  src: url(../fonts/whitney-book.woff) format("woff")
+}
+
+@font-face {
+  font-family: Whitney;
+  font-weight: 500;
+  src: url(../fonts/whitney-medium.woff) format("woff")
+}
+
+@font-face {
+  font-family: Whitney;
+  font-weight: 600;
+  src: url(../fonts/whitney-semibold.woff) format("woff")
+}
+
+@font-face {
+  font-family: Whitney;
+  font-weight: 700;
+  src: url(../fonts/whitney-bold.woff) format("woff")
+}
+
+html {  
+  overflow-y: hidden;
+}
+
+body {
+  font-size: 14px;
+  min-width: 1280px; 
+  font-family: Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
+  color: #36393f;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+img {
+  vertical-align:top;
+}
+
+a {
+  color: #36393f;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.button {
+  border: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Whitney,Helvetica Neue,Helvetica,Arial,sans-serif;
+  font-weight: 500;
+  position: relative;
+  text-align: center;
+  transition: all .17s ease-out;
+  user-select: none;
+  height: 50px;
+  font-size: 15px;
+  padding: 0 20px;
+  border-radius: 3px;
+  background-color: #000;
+  min-width: 125px;
+  color: #fff;
+}
+
+.button.tiny {
+  height: 40px;
+}
+
+.button.upload {
+  min-width: auto;
+  padding-right: 65px;
+  background: #000 url(https://discordapp.com/assets/03385fc1d38dabb4865f24eab0ccbfe0.svg) no-repeat right 20px center;
+  word-break: break-all;
+}
+
+label.button {
+  line-height: 50px;
+}
+
+.title {
+  color: #4f545c;
+  margin: 0 0 24px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  text-transform: uppercase;  
+}
+
+.form-row {
+  position: relative;
+  width: 100%;  
+  padding-bottom: 20px;
+}
+
+.form-col {
+  display: flex;
+  margin-right: -10px;
+  margin-left: -10px;
+}
+
+.form-col > * {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+.form-title {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .5px;
+  line-height: 16px;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.form {
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid rgba(79,84,92,.3);
+  border-radius: 3px;
+  font-size: 16px;
+  color: #36393f;
+  background-color: #fff;
+}
+
+textarea.form {
+  min-height: 170px;
+  resize: vertical;
+}
+
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;     
+}
+
+.input-group label:first-child {
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 6px 12px;
+  background-color: #f4f4f4;
+  border: 1px solid rgba(79,84,92,.3);
+  color: #495057;
+  margin-right: -1px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-group .form:last-child {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;  
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
