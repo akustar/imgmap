@@ -31,7 +31,10 @@
         <a href="#" @click.stop="saveHtmlFile" title="html 파일로 저장"><img src="../../assets/images/download-arrow.png" width="18" alt=""> HTML 파일로 저장</a>
       </div> -->
     </div>
-    <a href="https://github.com/akustar/imgmap" class="github" target="_blank"><img src="../../assets/images/GitHub-Mark-64px.png" width="32" alt=""></a>
+    <div class="actions">
+      <a href="#!" @click.prevent="installApp" v-if="deferredPrompt">홈 화면에 앱 추가</a>
+      <a href="https://github.com/akustar/imgmap" class="github" target="_blank"><img src="../../assets/images/GitHub-Mark-64px.png" width="32" alt=""></a>
+    </div>
   </div>
 </template>
 
@@ -48,6 +51,7 @@
         width: 0,
         height: 0,
         link: '',
+        deferredPrompt: null,
         usemapCode: '<map name="imagemap">\n\n</map>',
       }
     },
@@ -79,7 +83,33 @@
 </map>`
       }
     },
+    mounted () {
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault()
+
+        if (event.platforms[0] === 'web') {
+          this.deferredPrompt = event
+        }
+
+        return false
+      })
+    },
     methods: {
+      installApp () {
+        if (this.deferredPrompt !== null) {
+          this.deferredPrompt.prompt()
+
+          this.deferredPrompt.userChoice.then((choiceResult) => {
+            if(choiceResult.outcome == 'dismissed') {
+              console.log('사용자가 홈 화면에 추가 취소')
+            }
+            else {
+              console.log('사용자가 홈 화면에 앱을 설치함')
+            }
+            this.deferredPrompt = null
+          })
+        }        
+      },
       updateSize (model) {
         if (this.state.width === this.width && this.state.height === this.height 
         || !this.state.link) return
@@ -153,20 +183,29 @@
     padding: 24px;
     overflow: auto;
   }
-  .github {
+
+  .actions {
+    display: flex;
+    align-items: center;
     position: absolute;
     right: 20px;
     top: 20px;
   }
-  .actions {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    z-index: 10;
-  }
 
   .actions > a {
-    margin: 0 4px;
+    display: block;
+    text-decoration: none;
+    color: #4285f4;
+    margin-left: 10px;
+  }
+
+  .actions > a:first-child {
+    position: relative;
+    top: 2px;
+  }
+
+  .actions > a:hover {
+    text-decoration: underline;
   }
 
   .form-col.size .input-group {
