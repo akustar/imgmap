@@ -42,12 +42,12 @@ img {
 }
 
 a {
-  color: #36393f;
   text-decoration: none;
+  color: #4285f4;
 }
 
 a:hover {
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .button {

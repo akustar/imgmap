@@ -26,12 +26,12 @@
     <div class="form-row">
       <h3 class="form-title">Usemap Code</h3>
       <textarea class="form" v-model="usemapCode" spellcheck="false"></textarea>
-      <!-- <div class="actions">
-        <a href="#" @click.stop="clipboardCopy" title="클립보드에 복사"><img src="../../assets/images/copy.png" width="18" alt=""> 클립보드 복사</a>
-        <a href="#" @click.stop="saveHtmlFile" title="html 파일로 저장"><img src="../../assets/images/download-arrow.png" width="18" alt=""> HTML 파일로 저장</a>
-      </div> -->
+      <div class="actions">
+        <!-- a href="#" @click.stop="clipboardCopy" title="클립보드에 복사">클립보드 복사</a-->
+        <a href="#!" @click.prevent="downloadHtmlFile">HTML 파일로 저장</a>
+      </div>
     </div>
-    <div class="actions">
+    <div class="links">
       <a href="#!" @click.prevent="installApp" v-if="deferredPrompt">홈 화면에 앱 추가</a>
       <a href="https://github.com/akustar/imgmap" class="github" target="_blank"><img src="../../assets/images/GitHub-Mark-64px.png" width="32" alt=""></a>
     </div>
@@ -52,7 +52,7 @@
         height: 0,
         link: '',
         deferredPrompt: null,
-        usemapCode: '<map name="imagemap">\n\n</map>',
+        usemapCode: `<map name="imagemap">\n\n</map>`
       }
     },
     watch: {
@@ -169,8 +169,27 @@
       clipboardCopy () {
         
       },
-      saveHtmlFile () {
-        
+      downloadHtmlFile () {
+        const innerHTML = 
+`<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+</head>
+<body>
+<img src="${this.link}" usemap="#imagemap" width="${this.width}" height="${this.height}">
+${this.usemapCode}
+</body>
+</html>`;
+
+        const blob = new Blob([innerHTML], {type: 'text/html;charset=utf-8'})
+        const url = window.URL.createObjectURL(blob)
+        const anchor = document.createElement('a')
+
+        anchor.href = url
+        anchor.download = 'index.html'
+        anchor.click()
       }
     }
   }
@@ -185,6 +204,12 @@
   }
 
   .actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .links {
     display: flex;
     align-items: center;
     position: absolute;
@@ -192,20 +217,14 @@
     top: 20px;
   }
 
-  .actions > a {
+  .links > a {
     display: block;
-    text-decoration: none;
-    color: #4285f4;
     margin-left: 10px;
   }
 
-  .actions > a:first-child {
+  .links > a:first-child {
     position: relative;
     top: 2px;
-  }
-
-  .actions > a:hover {
-    text-decoration: underline;
   }
 
   .form-col.size .input-group {
