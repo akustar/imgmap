@@ -24,8 +24,11 @@
       </div>
     </div>
     <div class="form-row">
-      <h3 class="form-title">Usemap Code</h3>
-      <textarea class="form" v-model="usemapCode" spellcheck="false"></textarea>
+      <div style="margin-bottom: 6px;">
+        <button type="button" class="button tiny" :class="{ 'transparent': snippet !== 'Coords' }" @click="snippet = 'Coords'">Coords</button>
+        <button type="button" class="button tiny" :class="{ 'transparent': snippet !== 'Responsive' }" @click="snippet = 'Responsive'">Responsive</button>
+      </div>
+      <textarea class="form" v-model="code" spellcheck="false"></textarea>
       <div class="actions">
         <!-- a href="#" @click.stop="clipboardCopy" title="클립보드에 복사">클립보드 복사</a-->
         <a href="#!" @click.prevent="downloadHtmlFile">HTML 파일로 저장</a>
@@ -52,7 +55,8 @@
         height: 0,
         link: '',
         deferredPrompt: null,
-        usemapCode: `<map name="imagemap">\n\n</map>`
+        code: `<map name="map">\n\n</map>`,
+        snippet: 'Coords'
       }
     },
     watch: {
@@ -63,6 +67,36 @@
         this.height = this.state.height
       },
       'state.maps' () {
+        if (this.snippet === 'Coords') {
+          this.setCoords()
+        }
+        else if (this.snippet === 'Responsive') {
+          this.setResponsive()
+        }
+      },
+      'snippet' () {
+        if (this.snippet === 'Coords') {
+          this.setCoords()
+        }
+        else if (this.snippet === 'Responsive') {
+          this.setResponsive()
+        }
+      }
+    },
+    mounted () {
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault()
+
+        if (event.platforms[0] === 'web') {
+          this.deferredPrompt = event
+        }
+
+        return false
+      })
+    },
+    // 미래의 나에게: 실제코드와 화면에서의 코드 모두 가독성이 너무 안좋으므로 코드미러 등 스타일 적용 꼭 할것!!
+    methods: {
+      setCoords () {
         const areas = this.state.maps.map(map => {
           const left = Number(map.left.toFixed(0))
           const top = Number(map.top.toFixed(0))
@@ -77,24 +111,28 @@
           return `<area shape="rect" coords="${x1}, ${x2}, ${y1}, ${y2}" href="" title="" target="_blank" />`
         }).join('\n  ')
 
-        this.usemapCode = 
-`<map name="imagemap">
+        this.code = 
+`<map name="map">
   ${areas}
 </map>`
-      }
-    },
-    mounted () {
-      window.addEventListener('beforeinstallprompt', (event) => {
-        event.preventDefault()
+      },
+      setResponsive () {
+        const styles = this.state.maps.map(map => {
+          let left = Number(map.left.toFixed(0))
+          let top = Number(map.top.toFixed(0))
+          let width = Number(map.width.toFixed(0))
+          let height = Number(map.height.toFixed(0))
+          
+          left = left / this.state.width * 100
+          top = top / this.state.height * 100
+          width = width / this.state.width * 100
+          height = height / this.state.height * 100
 
-        if (event.platforms[0] === 'web') {
-          this.deferredPrompt = event
-        }
+          return `<a href="" class="${map.id}" title="" style="width: ${width}%;height: ${height}%;top: ${top}%;left: ${left}%;"></a>`
+        }).join('\n  ')
 
-        return false
-      })
-    },
-    methods: {
+        this.code = `${styles}`
+      },
       installApp () {
         if (this.deferredPrompt !== null) {
           this.deferredPrompt.prompt()
@@ -166,11 +204,12 @@
           img.src = URL.createObjectURL(file)
         }
       },
-      clipboardCopy () {
-        
-      },
+      clipboardCopy () {},
       downloadHtmlFile () {
-        const innerHTML = 
+        let innerHTML = '';
+
+        if (this.snippet === 'Coords') {
+        innerHTML = 
 `<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -178,10 +217,42 @@
   <title>index</title>
 </head>
 <body>
-<img src="${this.link}" usemap="#imagemap" width="${this.width}" height="${this.height}">
-${this.usemapCode}
+<img src="${this.link}" usemap="#map" width="${this.width}" height="${this.height}">
+${this.code}
 </body>
 </html>`;
+        }
+        else if (this.snippet === 'Responsive') {
+        innerHTML = 
+`<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+  <style>
+    .map {
+      position: relative;
+      display: inline-block;
+    }
+    .map img {
+      display: block;
+      width: 100%;
+      max-width: ${this.width}px;
+    }
+    [class*="mapper-"] {
+      position: absolute;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<div class="map">
+  <img src="${this.link}">
+  ${this.code}
+</div>
+</body>
+</html>`;
+        }
 
         const blob = new Blob([innerHTML], {type: 'text/html;charset=utf-8'})
         const url = window.URL.createObjectURL(blob)
@@ -205,7 +276,7 @@ ${this.usemapCode}
 
   .actions {
     position: absolute;
-    top: 0;
+    bottom: 0;
     right: 0;
   }
 
@@ -231,6 +302,12 @@ ${this.usemapCode}
     width: 30%;
     min-width: 200px;
   }
+
+  .button.transparent {
+    background-color: transparent;
+    color: #36393f;
+  }
+
   @media (max-width: 1440px) {
     .form-col.size .input-group {
       width: 50%

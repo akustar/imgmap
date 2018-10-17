@@ -37,7 +37,7 @@
     methods: {      
       createMaps (clientRect) {
         const maps = this.state.maps.slice(0)
-        const id = 'map-' + maps.length
+        const id = 'mapper-' + maps.length
         maps.push({ id, ...clientRect })
 
         this.$set(this.state, 'maps', maps)
