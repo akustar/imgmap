@@ -77,13 +77,6 @@ export default {
   },
   methods: {
     handleKeyDown(e) {
-      console.log(
-        "handleKeyDown: ",
-        e.keyCode,
-        this.keyCodeState,
-        JSON.parse(JSON.stringify(this.state.maps))
-      );
-
       this.keyCodeState.codeList.push(e.keyCode);
       if (this.keyCodeState.codeList.length >= 3) {
         this.keyCodeState.codeList.shift();
@@ -98,11 +91,12 @@ export default {
         this.keyCodeState.isCopy
       ) {
         this.keyCodeState.isCopy = false;
-        const idIndexMatch = Number(this.map.id.match(/\d/g)) + 1;
-        console.log("paste ", e.view);
+        const idIndexMatch =
+          Number(this.state.maps[this.state.maps.length - 1].id.match(/\d/g)) +
+          1;
         this.state.maps.push({
           id: `mapper-${idIndexMatch}`,
-          left: this.map.left + this.map.left,
+          left: this.map.left + this.map.width + 50,
           top: this.map.top,
           width: this.map.width,
           height: this.map.height
