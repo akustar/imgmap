@@ -5,7 +5,7 @@
     :style="draggableBoxStyling"
     @mousedown.stop="onMouseDown"
   >
-    <input type="button" class="draggable_input" @keydown="handleKeyDown" />
+    <input type="button" class="draggable_input" @keydown="dragCopyPaste" />
     <slot></slot>
     <div class="resizable" @mousedown="isResizable = true"></div>
     <button
@@ -76,27 +76,37 @@ export default {
     this.constraint = document.querySelector(this.constraintSelector);
   },
   methods: {
-    handleKeyDown(e) {
-      this.keyCodeState.codeList.push(e.keyCode);
-      if (this.keyCodeState.codeList.length >= 3) {
-        this.keyCodeState.codeList.shift();
+    dragCopyPaste(e) {
+      const KEY_CODE = {
+        CTRL: 91,
+        C: 67,
+        V: 86
+      };
+      const TEMP_CODE_LIST_LENGTH = 2;
+      const PASTE_INDENT_X = 50;
+
+      const codeList = this.keyCodeState.codeList;
+      const getLastIncrementId =
+        Number(this.state.maps[this.state.maps.length - 1].id.match(/\d/g)) + 1;
+
+      codeList.push(e.keyCode);
+      if (codeList.length > TEMP_CODE_LIST_LENGTH) {
+        codeList.shift();
       }
-      if (e.keyCode === 67 && this.keyCodeState.codeList[0] === 91) {
+      if (e.keyCode === KEY_CODE.C && codeList[0] === KEY_CODE.CTRL) {
         this.keyCodeState.isCopy = true;
       }
       if (
-        e.keyCode === 86 &&
-        (this.keyCodeState.codeList[0] === 91 ||
-          this.keyCodeState.codeList[0] === 67) &&
+        e.keyCode === KEY_CODE.V &&
+        (codeList[0] === KEY_CODE.CTRL ||
+          this.keyCodeState.codeList[0] === KEY_CODE.C) &&
         this.keyCodeState.isCopy
       ) {
         this.keyCodeState.isCopy = false;
-        const idIndexMatch =
-          Number(this.state.maps[this.state.maps.length - 1].id.match(/\d/g)) +
-          1;
+
         this.state.maps.push({
-          id: `mapper-${idIndexMatch}`,
-          left: this.map.left + this.map.width + 50,
+          id: `mapper-${getLastIncrementId}`,
+          left: this.map.left + this.map.width + PASTE_INDENT_X,
           top: this.map.top,
           width: this.map.width,
           height: this.map.height
