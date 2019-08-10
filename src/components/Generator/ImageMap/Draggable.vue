@@ -76,6 +76,30 @@ export default {
     this.constraint = document.querySelector(this.constraintSelector);
   },
   methods: {
+    isKeyCodeCopy(...params) {
+      const { e, KEY_CODE, codeList } = params[0];
+      return e.keyCode === KEY_CODE.C && codeList[0] === KEY_CODE.CTRL;
+    },
+    isKeyCodePaste(...params) {
+      const { e, KEY_CODE, codeList } = params[0];
+      return (
+        e.keyCode === KEY_CODE.V &&
+        (codeList[0] === KEY_CODE.CTRL || codeList[0] === KEY_CODE.C)
+      );
+    },
+    mapsIdIncrementAdd() {
+      const PASTE_INDENT_X = 50;
+      const getLastIncrementId =
+        Number(this.state.maps[this.state.maps.length - 1].id.match(/\d/g)) + 1;
+
+      this.state.maps.push({
+        id: `mapper-${getLastIncrementId}`,
+        left: this.map.left + this.map.width + PASTE_INDENT_X,
+        top: this.map.top,
+        width: this.map.width,
+        height: this.map.height
+      });
+    },
     dragCopyPaste(e) {
       const KEY_CODE = {
         CTRL: 91,
@@ -83,34 +107,21 @@ export default {
         V: 86
       };
       const TEMP_CODE_LIST_LENGTH = 2;
-      const PASTE_INDENT_X = 50;
-
       const codeList = this.keyCodeState.codeList;
-      const getLastIncrementId =
-        Number(this.state.maps[this.state.maps.length - 1].id.match(/\d/g)) + 1;
 
       codeList.push(e.keyCode);
       if (codeList.length > TEMP_CODE_LIST_LENGTH) {
         codeList.shift();
       }
-      if (e.keyCode === KEY_CODE.C && codeList[0] === KEY_CODE.CTRL) {
+      if (this.isKeyCodeCopy({ e, KEY_CODE, codeList })) {
         this.keyCodeState.isCopy = true;
       }
       if (
-        e.keyCode === KEY_CODE.V &&
-        (codeList[0] === KEY_CODE.CTRL ||
-          this.keyCodeState.codeList[0] === KEY_CODE.C) &&
+        this.isKeyCodePaste({ e, KEY_CODE, codeList }) &&
         this.keyCodeState.isCopy
       ) {
         this.keyCodeState.isCopy = false;
-
-        this.state.maps.push({
-          id: `mapper-${getLastIncrementId}`,
-          left: this.map.left + this.map.width + PASTE_INDENT_X,
-          top: this.map.top,
-          width: this.map.width,
-          height: this.map.height
-        });
+        this.mapsIdIncrementAdd();
       }
     },
     onMouseDown() {
