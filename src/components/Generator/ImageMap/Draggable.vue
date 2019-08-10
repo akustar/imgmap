@@ -98,13 +98,14 @@ export default {
         this.keyCodeState.isCopy
       ) {
         this.keyCodeState.isCopy = false;
-        console.log("paste ", this.map);
+        const idIndexMatch = Number(this.map.id.match(/\d/g)) + 1;
+        console.log("paste ", e.view);
         this.state.maps.push({
-          id: "mapper-1",
-          left: 235.59375,
-          top: 96,
-          width: 67,
-          height: 88
+          id: `mapper-${idIndexMatch}`,
+          left: this.map.left + this.map.left,
+          top: this.map.top,
+          width: this.map.width,
+          height: this.map.height
         });
       }
     },
@@ -277,7 +278,6 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.5;
-  border: 1px solid red;
+  opacity: 0;
 }
 </style>
